@@ -1,0 +1,52 @@
+cgrade: C grade browser support
+===============================================
+
+The idea is to make sure crappy browsers get ONLY html; No CSS, no Javascript.
+
+There are 3 parts:
+
+The test -- tells us if a browser is up to snuff or not.
+    this code will have to run in any browser that attempts to run it.
+    it needs to run in head, without a body
+
+    standards mode (document.compatMode = 'CSS1Copmpat') // the most basic test: elimiates ie5 and safari2
+    Supports Css 2.1 selectors + inline-block // a much stronger test -- eliminates IE6 and FF2
+    w3c dom event registration // removes ie < 9, but allows firefox 1
+    something stronger? html5 support should be left to modernizr
+
+The bootstrap loader -- pulls in a javascript file
+    has to run in any browser that passes the test
+    expect ie workarounds here
+
+    should load javascript asynchronously, non-blocking.
+    either a: one built, concatenated and minified file
+    or b: a file that will then to the loading for the rest of the site
+
+The FOUC evader
+    before the body loads
+        use css to hide any parts of the page that will be improperly styled
+    after we're fully done
+        remove those styles. -- client will have to call this.
+
+    even pages that are progressively enhanced will want to use the FOUC evader to hide their "Use a real browser" message
+
+    body class: no-js --> loading --> done/ready/user-supplied-class/nothing
+    elemclass: loadhidden
+    html.loading .loadhidden { display:none }
+
+
+There are 3 outcomes:
+    in a browser with no JS/js disabled:
+        They see the plain page
+    in a browser that fails the test:
+        They see a plain page
+        and no js errors -- code will have to work in ns2/ie3/j. random browser.
+    in a browser that passed the test:
+        page is unrendered during head processing
+        troublesome elements are hidden to prevent FOUC
+        (domcontentloaded/window.onload fires here?)
+        js and css are downloaded and applied
+        .loading class is removed / page is ready (user supplied)        
+
+
+Ultimately, I hope that all 3 patrts will be small enough to inline them into the head tag of yuor page
