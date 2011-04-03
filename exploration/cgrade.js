@@ -1,29 +1,49 @@
-(function() {
+(function(document) {
+    var target,
+    SCRIPT = "script",
+    TEXTJS = "text/javascript",
+    STYLE = "style",
+    TEXTCSS = "text/css";
 
     function theTest() {
         return true;
     }
 
     function preTest() {
+        target = document.getElementsByTagName(SCRIPT)[0];
         return true;
     }
 
+    function buildDynamicTag(tag, type) {
+        var elem = document.createElement(tag);
+        elem.type = type
+        return elem;
+    }
+
+    function putInHead(elem) {
+        target.parentNode.insertBefore(elem, target);
+    }
+
     function loadJsAsynch() {
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.async = true;
+        var script = buildDynamicTag(SCRIPT, TEXTJS);
+        script.async = true; // should this be "true"? string v bool
         script.src = "main.js";
 
-        var target = document.getElementsByTagName("script")[0];
-        target.parentNode.insertBefore(script, target);
+        putInHead(script);
     }
 
     function insertFoucPreventer() {
         $(document.documentElement).removeClass("no-js").addClass("js loading");
 
-        var foucPreventer = $("<style/>").text(".loading .hideload {display:none};");
-        var target = document.getElementsByTagName("script")[0];
-        target.parentNode.insertBefore(foucPreventer.get(0), target);
+        var style = buildDynamicTag(STYLE, TEXTCSS);
+        var css = ".loading .hideload {display:none};";
+        if (style.styleSheet) {
+            //weird IE way
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+        putInHead(style);
     }
 
     function doIt() {
@@ -34,4 +54,4 @@
     }
 
     doIt();
-})();
+})(window.document);
