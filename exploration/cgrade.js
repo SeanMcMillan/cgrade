@@ -28,7 +28,7 @@
         }
     };
 
-    tests['css2-selectors'] = {
+    tests['child-selector'] = {
         pre:  function() { return true;},
         test: function() {
         
@@ -52,7 +52,7 @@
     tests['w3c-events'] = {
         pre:  function() { return true;},
         test: function() {
-        
+            return !!document.addEventListener;
         }
     };
 
